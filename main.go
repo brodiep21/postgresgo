@@ -25,7 +25,7 @@ func main() {
 	}
 	fmt.Println("Reached DB")
 
-	row := db.QueryRow("SELECT cars, description FROM cars LIMIT 1")
+	row := db.QueryRow("SELECT Make, description FROM cars LIMIT 1")
 
 	car := Car{}
 
@@ -34,7 +34,7 @@ func main() {
 
 	}
 
-	rows, err := db.Query("SELECT cars, description FROM cars Limit 10")
+	rows, err := db.Query("SELECT Make, description FROM cars Limit 10")
 	if err != nil {
 		log.Fatalf("couldn't execute query: %v", err)
 	}
