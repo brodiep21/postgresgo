@@ -5,8 +5,18 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/lib/pq"
 )
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "bp21"
+	password = "carrie31"
+	dbname   = "bp21"
+)
+
+// var password = os.Getenv("pass")
 
 type Car struct {
 	Make       string
@@ -15,17 +25,29 @@ type Car struct {
 }
 
 func main() {
-	db, err := sql.Open("cars", "postgresql://localhost:5432/bp21")
+
+	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatalf("could not connect to the db: %v", err)
 	}
+
+	// db.SetMaxIdleConns(5)
+	// db.SetMaxOpenConns(7)
+	// db.SetConnMaxIdleTime(4 * time.Second)
+	// db.SetConnMaxLifetime(20 * time.Second)
 
 	if err := db.Ping(); err != nil {
 		log.Fatalf("unable to reach db: %v", err)
 	}
 	fmt.Println("Reached DB")
 
-	row := db.QueryRow("SELECT Make, description FROM cars LIMIT 1")
+	defer db.Close()
+
+	row := db.QueryRow("SELECT Make, Model, Horsepower FROM cars LIMIT 1")
 
 	car := Car{}
 
@@ -34,7 +56,7 @@ func main() {
 
 	}
 
-	rows, err := db.Query("SELECT Make, description FROM cars Limit 10")
+	rows, err := db.Query("SELECT Make, Model, Horsepower FROM cars Limit 10")
 	if err != nil {
 		log.Fatalf("couldn't execute query: %v", err)
 	}
@@ -51,7 +73,10 @@ func main() {
 	}
 	fmt.Printf("found %d cars: %+v", len(cars), cars)
 
-	carName := "Ferrari"
+	// newCar :=
 
-	row := db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
+	// carName := "Ferrari"
+
+	// row = db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
+
 }
