@@ -4,24 +4,26 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
 
 const (
-	host     = "localhost"
-	port     = 5432
-	user     = "bp21"
-	password = "carrie31"
-	dbname   = "bp21"
+	host   = "localhost"
+	port   = 5432
+	user   = "bp21"
+	dbname = "bp21"
 )
 
-// var password = os.Getenv("pass")
+var password = os.Getenv("pass")
 
 type Car struct {
 	Make       string
 	Model      string
 	Horsepower string
+	MSRP       string
 }
 
 func main() {
@@ -35,10 +37,10 @@ func main() {
 		log.Fatalf("could not connect to the db: %v", err)
 	}
 
-	// db.SetMaxIdleConns(5)
-	// db.SetMaxOpenConns(7)
-	// db.SetConnMaxIdleTime(4 * time.Second)
-	// db.SetConnMaxLifetime(20 * time.Second)
+	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(7)
+	db.SetConnMaxIdleTime(4 * time.Second)
+	db.SetConnMaxLifetime(20 * time.Second)
 
 	if err := db.Ping(); err != nil {
 		log.Fatalf("unable to reach db: %v", err)
@@ -47,7 +49,27 @@ func main() {
 
 	defer db.Close()
 
-	row := db.QueryRow("SELECT Make, Model, Horsepower FROM cars LIMIT 1")
+	// cars := []Car{}
+
+	// for rows.Next() {
+	// 	car := Car{}
+	// 	if err := rows.Scan(&car.Make, &car.Model, &car.Horsepower); err != nil {
+	// 		log.Fatalf("could not scan row: %v", err)
+	// 	}
+
+	// 	cars = append(cars, car)
+	// }
+	// fmt.Printf("found %d cars: %+v", len(cars), cars)
+
+	//user input for Make of vehicle
+	var CarMake string
+	fmt.Println("What Make are you looking for?")
+	fmt.Scanln(&CarMake)
+	// newCar :=
+
+	// row = db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
+
+	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars LIMIT 1")
 
 	car := Car{}
 
@@ -56,27 +78,9 @@ func main() {
 
 	}
 
-	rows, err := db.Query("SELECT Make, Model, Horsepower FROM cars Limit 10")
-	if err != nil {
-		log.Fatalf("couldn't execute query: %v", err)
-	}
-
-	cars := []Car{}
-
-	for rows.Next() {
-		car := Car{}
-		if err := rows.Scan(&car.Make, &car.Model, &car.Horsepower); err != nil {
-			log.Fatalf("could not scan row: %v", err)
-		}
-
-		cars = append(cars, car)
-	}
-	fmt.Printf("found %d cars: %+v", len(cars), cars)
-
-	// newCar :=
-
-	// carName := "Ferrari"
-
-	// row = db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
+	// rows, err := db.Query("SELECT Make, Model, Horsepower, MSRP FROM cars Limit 10")
+	// if err != nil {
+	// 	log.Fatalf("couldn't execute query: %v", err)
+	// }
 
 }
