@@ -7,12 +7,6 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func builder() string {
-	var CarMake string
-	fmt.Println("What Make are you looking for?")
-	fmt.Scanln(&CarMake)
-	return CarMake
-}
 func Webscraper(search string) (string, string) {
 
 	c := colly.NewCollector(
@@ -35,7 +29,7 @@ func Webscraper(search string) (string, string) {
 	})
 
 	c.OnRequest(func(request *colly.Request) {
-		fmt.Println("Visiting", request.URL.String()+" and getting video card prices")
+		fmt.Println("Visiting", request.URL.String())
 	})
 
 	search = strings.ReplaceAll(search, " ", "+")
