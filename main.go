@@ -26,6 +26,9 @@ type Car struct {
 	MSRP       string
 }
 
+func init() {
+
+}
 func main() {
 
 	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
