@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/brodiep21/postgresgo/search"
+
 	_ "github.com/lib/pq"
 )
 
@@ -68,7 +70,9 @@ func main() {
 	var CarMake string
 	fmt.Println("What Make are you looking for?")
 	fmt.Scanln(&CarMake)
-	// newCar :=
+
+	search.HorsepowerSearch(CarMake)
+	search.MsrpSearch(CarMake)
 
 	// row = db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
 

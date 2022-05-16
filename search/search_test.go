@@ -10,18 +10,18 @@ func TestSearchHorsepower(t *testing.T) {
 	car := "infiniti qx80"
 
 	want := "400"
-	got, _ := search.DataSearch(car)
+	got := search.HorsepowerSearch(car)
 
 	if got != want {
 		t.Errorf("Got %s, want %s", got, want)
 	}
 
 }
-func TestSearchMSRP(t *testing.T) {
+func TestMSRPsearch(t *testing.T) {
 	car := "infiniti qx80"
 
 	want := "71,100"
-	_, got := search.DataSearch(car)
+	got := search.MsrpSearch(car)
 
 	if got != want {
 		t.Errorf("Got %s, want %s", got, want)
