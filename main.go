@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"log"
@@ -8,7 +9,6 @@ import (
 	"time"
 
 	"github.com/brodiep21/postgresgo/search"
-
 	_ "github.com/lib/pq"
 )
 
@@ -28,9 +28,6 @@ type Car struct {
 	MSRP       string
 }
 
-func init() {
-
-}
 func main() {
 
 	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
@@ -66,24 +63,60 @@ func main() {
 	// }
 	// fmt.Printf("found %d cars: %+v", len(cars), cars)
 
-	//user input for Make of vehicle
-	var CarMake string
+	//user input for Make
 	fmt.Println("What Make are you looking for?")
-	fmt.Scanln(&CarMake)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	make := scanner.Text()
+	//user input for Model
+	fmt.Println("What Model are you looking for?")
+	scanner2 := bufio.NewScanner(os.Stdin)
+	scanner2.Scan()
+	model := scanner2.Text()
 
-	search.HorsepowerSearch(CarMake)
-	search.MsrpSearch(CarMake)
+	fullvehicle := make + " " + model
 
-	// row = db.QueryRow("SELECT make, description FROM cars, WHERE make = $1 LIMIT $2", carName, 1)
+	fmt.Println("Captured:", fullvehicle)
 
-	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars LIMIT 1")
+	hp := search.HorsepowerSearch(fullvehicle)
+	msrp := search.MsrpSearch(fullvehicle)
+
+	fmt.Println(hp, msrp)
+
+	// fmt.Println("Would you like to add this data into the table?")
+	// scanner = bufio.NewScanner(os.Stdin)
+	// scanner.Scan()
+	// response := scanner.Text()
+	// switch response {
+	// case "y", "yes", "YES", "Y":
+
+	// }
+	newCar := Car{
+		Make:       make,
+		Model:      model,
+		Horsepower: hp,
+		MSRP:       msrp,
+	}
+
+	result, err := db.Exec("INSERT INTO cars (make, model, horsepower, msrp) VALUES ($1, $2, $3, $4)", newCar.Make, newCar.Model, newCar.Horsepower, newCar.MSRP)
+	if err != nil {
+		log.Fatalf("could not insert into cars, %v", err)
+	}
+
+	changedRows, err := result.RowsAffected()
+	if err != nil {
+		log.Fatalf("could not get rows affected by INSERT %v", err)
+	}
+	fmt.Println("inserted", changedRows, "rows")
 
 	car := Car{}
+	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars ")
 
-	if err := row.Scan(&car.Make, &car.Model, car.Horsepower); err != nil {
+	if err := row.Scan(&car.Make, &car.Model); err != nil {
 		log.Fatalf("Could not scan rows: %v", err)
-
 	}
+
+	fmt.Printf("found car %+v \n", car)
 
 	// rows, err := db.Query("SELECT Make, Model, Horsepower, MSRP FROM cars Limit 10")
 	// if err != nil {
