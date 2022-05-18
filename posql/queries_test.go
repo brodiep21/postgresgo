@@ -1,4 +1,4 @@
-package queries_test
+package posql_test
 
 import "testing"
 
@@ -13,5 +13,5 @@ func TestTableInsert(t *testing.T) {
 
 type dbSpy struct {
 	CarID string
-	
+
 }

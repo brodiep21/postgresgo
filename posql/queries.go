@@ -70,7 +70,7 @@ func TableInsert(make, model, hp, msrp string) string {
 	car := Car{}
 	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars ")
 
-	if err := row.Scan(&car.Make, &car.Model); err != nil {
+	if err := row.Scan(&car.Make, &car.Model, &car.Horsepower, &car.MSRP); err != nil {
 		log.Fatalf("Could not scan rows: %v", err)
 	}
 
