@@ -6,7 +6,7 @@ import (
 	"github.com/brodiep21/postgresgo/search"
 )
 
-func TestSearchHorsepower(t *testing.T) {
+func TestSearchqueries(t *testing.T) {
 	car := "infiniti qx80"
 
 	want := "400"
