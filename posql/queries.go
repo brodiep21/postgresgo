@@ -4,27 +4,20 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/brodiep21/postgresgo/car"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host   = "localhost"
-	port   = 5432
-	user   = "bp21"
-	dbname = "bp21"
-)
+type Car struct {
+	Make       string `json:"Make"`
+	Model      string `json:"Model"`
+	Horsepower string `json:"Horsepower"`
+	MSRP       string `json:"MSRP"`
+}
 
-var password = os.Getenv("pass")
-
-func TableInsert(make, model, hp, msrp string) string {
-
-	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+func (c *Car) TableInsert(make, model, hp, msrp string) string {
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

@@ -13,6 +13,8 @@ import (
 
 func main() {
 
+	a.Initialize()
+	a.Run("8080")
 	//user input for Make
 	fmt.Println("What Make are you looking for?")
 	scanner := bufio.NewScanner(os.Stdin)
