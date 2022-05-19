@@ -13,18 +13,6 @@ import (
 
 func main() {
 
-	// cars := []Car{}
-
-	// for rows.Next() {
-	// 	car := Car{}
-	// 	if err := rows.Scan(&car.Make, &car.Model, &car.Horsepower); err != nil {
-	// 		log.Fatalf("could not scan row: %v", err)
-	// 	}
-
-	// 	cars = append(cars, car)
-	// }
-	// fmt.Printf("found %d cars: %+v", len(cars), cars)
-
 	//user input for Make
 	fmt.Println("What Make are you looking for?")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -43,7 +31,9 @@ func main() {
 	hp := search.HorsepowerSearch(fullvehicle)
 	msrp := search.MsrpSearch(fullvehicle)
 
+	fmt.Printf("here is your data. \n"+fullvehicle+" %s %s \n", hp, msrp)
 	fmt.Println("Would you like to add this data into the table? Yes or No?")
+
 	scanner = bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	response := scanner.Text()
@@ -54,10 +44,5 @@ func main() {
 	case "n", "no":
 		break
 	}
-
-	// rows, err := db.Query("SELECT Make, Model, Horsepower, MSRP FROM cars Limit 10")
-	// if err != nil {
-	// 	log.Fatalf("couldn't execute query: %v", err)
-	// }
 
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/brodiep21/postgresgo/car"
 	_ "github.com/lib/pq"
 )
 
@@ -18,13 +19,6 @@ const (
 )
 
 var password = os.Getenv("pass")
-
-type Car struct {
-	Make       string
-	Model      string
-	Horsepower string
-	MSRP       string
-}
 
 func TableInsert(make, model, hp, msrp string) string {
 
@@ -49,7 +43,7 @@ func TableInsert(make, model, hp, msrp string) string {
 
 	defer db.Close()
 
-	newCar := Car{
+	newCar := car.Car{
 		Make:       make,
 		Model:      model,
 		Horsepower: hp,
@@ -67,7 +61,7 @@ func TableInsert(make, model, hp, msrp string) string {
 	}
 	fmt.Println("inserted", changedRows, "rows")
 
-	car := Car{}
+	car := car.Car{}
 	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars ")
 
 	if err := row.Scan(&car.Make, &car.Model, &car.Horsepower, &car.MSRP); err != nil {
