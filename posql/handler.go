@@ -3,8 +3,8 @@ package posql
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -22,7 +22,7 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (a *App) Initialize(password string) {
+func (a *App) Initialize(password string) error {
 
 	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
@@ -31,7 +31,7 @@ func (a *App) Initialize(password string) {
 	var err error
 	a.DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	a.DB.SetMaxIdleConns(5)
 	a.DB.SetMaxOpenConns(7)
@@ -39,16 +39,30 @@ func (a *App) Initialize(password string) {
 	a.DB.SetConnMaxLifetime(20 * time.Second)
 
 	if err := a.DB.Ping(); err != nil {
-		log.Fatalf("unable to reach db: %v", err)
+		return err
 	}
 	fmt.Println("Reached DB")
 
 	a.Router = mux.NewRouter()
+	return nil
 }
 
-func (a *App) Run(address string) {
+func (a *App) Run(address string) error {
 	err := http.ListenAndServe(":"+address, a.Router)
 	if err != nil {
-		log.Fatalf("Could not Run the Router, %s", err)
+		return err
 	}
+	return nil
+}
+
+func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		HttpErrorResponse(w, http.StatusBadRequest, "Primary car ID not found")
+	}
+}
+
+func HttpErrorResponse(w http.ResponseWriter, RCode int, info interface{}) {
+
 }

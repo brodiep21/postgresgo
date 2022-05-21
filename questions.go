@@ -9,7 +9,7 @@ import (
 )
 
 // requests make and model from cmdline
-func MMquestions() string {
+func MMquestions() (string, error) {
 
 	//user input for Make
 	fmt.Println("What Make are you looking for?")
@@ -26,6 +26,13 @@ func MMquestions() string {
 	fullvehicle := make + " " + model
 	fmt.Println("Captured:", fullvehicle)
 
-	hp := search.HorsepowerSearch(fullvehicle)
-	msrp := search.MsrpSearch(fullvehicle)
+	hp, err := search.HorsepowerSearch(fullvehicle)
+	if err != nil {
+		return "", error
+	}
+	msrp, err = search.MsrpSearch(fullvehicle)
+	if err != nil {
+		return "", error
+	}
+
 }

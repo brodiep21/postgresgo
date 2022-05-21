@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -14,10 +15,19 @@ var password = os.Getenv("pass")
 
 func main() {
 	a := posql.App{}
-	a.Initialize(password)
-	a.Run("8080")
+	err := a.Initialize(password)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = a.Run("8080")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	vehicle := MMquestions()
+	vehicle, err = MMquestions()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Printf("here is your data. \n" + vehicle)
 	fmt.Println("Would you like to add this data into the table? Yes or No?")
