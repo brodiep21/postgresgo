@@ -10,9 +10,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func main() {
+var password = os.Getenv("pass")
 
-	a.Initialize()
+func main() {
+	a := posql.App{}
+	a.Initialize(password)
 	a.Run("8080")
 
 	vehicle := MMquestions()
@@ -20,7 +22,7 @@ func main() {
 	fmt.Printf("here is your data. \n" + vehicle)
 	fmt.Println("Would you like to add this data into the table? Yes or No?")
 
-	scanner = bufio.NewScanner(os.Stdin)
+	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	response := scanner.Text()
 	response = strings.ToLower(response)

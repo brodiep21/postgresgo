@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,9 +22,7 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (a *App) Initialize() {
-
-	var password = os.Getenv("pass")
+func (a *App) Initialize(password string) {
 
 	var psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
