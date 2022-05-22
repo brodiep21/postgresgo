@@ -2,6 +2,7 @@ package posql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -61,8 +62,28 @@ func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Primary car ID not found")
 	}
+
+	c := Car{ID: id}
+	if err := c.GetCar(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			HttpErrorResponse(w, http.StatusNotFound, "Car not found")
+		default:
+			HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	JsonResponse(w, http.StatusOK, c)
 }
 
-func HttpErrorResponse(w http.ResponseWriter, RCode int, info interface{}) {
+func HttpErrorResponse(w http.ResponseWriter, Rcode int, message string) {
+	JsonResponse(w, Rcode, map[string]string{"error": message})
+}
 
+func JsonResponse(w http.ResponseWriter, Rcode int, info interface{}) {
+	response, _ := json.Marshal(info)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(Rcode)
+	w.Write(response)
 }
