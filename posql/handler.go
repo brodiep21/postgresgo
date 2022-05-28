@@ -56,6 +56,18 @@ func (a *App) Run(address string) error {
 	return nil
 }
 
+func HttpErrorResponse(w http.ResponseWriter, Rcode int, message string) {
+	JsonResponse(w, Rcode, map[string]string{"error": message})
+}
+
+func JsonResponse(w http.ResponseWriter, Rcode int, info interface{}) {
+	response, _ := json.Marshal(info)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(Rcode)
+	w.Write(response)
+}
+
 func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -76,14 +88,13 @@ func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
 	JsonResponse(w, http.StatusOK, c)
 }
 
-func HttpErrorResponse(w http.ResponseWriter, Rcode int, message string) {
-	JsonResponse(w, Rcode, map[string]string{"error": message})
-}
-
-func JsonResponse(w http.ResponseWriter, Rcode int, info interface{}) {
-	response, _ := json.Marshal(info)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(Rcode)
-	w.Write(response)
+func (a *App) GetCars(w http.ResponseWriter, r *http.Request) error {
+	count, err := strconv.Atoi(r.FormValue("count"))
+	if err != nil {
+		return err
+	}
+	start, err := strconv.Atoi(r.FormValue("start"))
+	if err != nil {
+		return err
+	}
 }
