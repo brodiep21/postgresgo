@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -76,7 +77,7 @@ func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := Car{ID: id}
-	if err := c.GetCar(a.DB); err != nil {
+	if err := c.getCar(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			HttpErrorResponse(w, http.StatusNotFound, "Car not found")
@@ -97,4 +98,28 @@ func (a *App) GetCars(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+
+	c := Car{}
+	cars, err := c.getCars(a.DB, start, count)
+	if err != nil {
+		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	JsonResponse(w, http.StatusOK, cars)
+	return nil
+}
+
+
+func (a *App) CreateCar(w http.ResponseWriter, R *http.Request) error {
+	var c Car
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
+		return err
+	} 
+	defer r.Body.Close()
+
+	if err := 
 }
