@@ -20,22 +20,22 @@ func (c *Car) getCar(db *sql.DB) error {
 	return db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars WHERE id=$1", c.ID).Scan(&c.Make, &c.Model, &c.Horsepower, &c.MSRP)
 }
 
-func (c *Car) updateCar(db *sql.DB) (string, error) {
+func (c *Car) updateCar(db *sql.DB) (Car, error) {
 
 	result, err := db.Exec("UPDATE cars SET Make=$1, Model=$2, Horsepower=$3, MSRP=$4 WHERE id=$5", &c.Make, &c.Model, &c.Horsepower, &c.MSRP, &c.ID)
 	if err != nil {
-		return "", err
+		return Car{}, err
 	}
 
 	_, err = result.RowsAffected()
 	if err != nil {
-		return "", err
+		return Car{}, err
 	}
 
 	car := Car{}
 	idconv := strconv.Itoa(c.ID)
 	if err != nil {
-		return "", err
+		return Car{}, err
 	}
 	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars WHERE id=$1", idconv)
 

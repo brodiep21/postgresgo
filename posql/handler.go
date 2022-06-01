@@ -111,9 +111,9 @@ func (a *App) GetCars(w http.ResponseWriter, r *http.Request) error {
 }
 
 
-func (a *App) CreateCar(w http.ResponseWriter, R *http.Request) error {
-	var c Car
+func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) error {
 
+	var c Car
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
@@ -121,5 +121,39 @@ func (a *App) CreateCar(w http.ResponseWriter, R *http.Request) error {
 	} 
 	defer r.Body.Close()
 
-	if err := 
+	if err := c.createCar(a.DB); err != nil {
+		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return err
+	}
+
+	JsonResponse(w, http.StatusCreated, c)
+	return nil
+}
+
+func(a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		HttpErrorResponse(w, http.StatusInternalServerError, "Invalid Car ID")
+		return err
+	}
+
+	var c Car
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
+		return err
+	}
+	
+	defer r.Body.Close()
+	c.ID = id
+
+	str, err := c.updateCar(a.DB); 
+	if err != nil {
+		HttpErrorResponse(w, http.StatusInternalServerError, err.error())
+		return  err
+	}
+
+	JsonResponse(w, http.StatusOK, c)
+	return str
 }
