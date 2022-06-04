@@ -110,7 +110,6 @@ func (a *App) GetCars(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-
 func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) error {
 
 	var c Car
@@ -118,7 +117,7 @@ func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) error {
 	if err := decoder.Decode(&c); err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
 		return err
-	} 
+	}
 	defer r.Body.Close()
 
 	if err := c.createCar(a.DB); err != nil {
@@ -130,11 +129,11 @@ func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func(a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
+func (a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		HttpErrorResponse(w, http.StatusInternalServerError, "Invalid Car ID")
+		HttpErrorResponse(w, http.StatusBadRequest, "Invalid Car ID")
 		return err
 	}
 
@@ -144,16 +143,49 @@ func(a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
 		return err
 	}
-	
-	defer r.Body.Close()
-	c.ID = id
 
-	str, err := c.updateCar(a.DB); 
+	defer r.Body.Close()
+
+	str, err := c.updateCar(a.DB)
 	if err != nil {
-		HttpErrorResponse(w, http.StatusInternalServerError, err.error())
-		return  err
+		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return err
+	}
+	c = Car{
+		ID:         id,
+		Make:       str.Make,
+		Model:      str.Model,
+		Horsepower: str.Horsepower,
+		MSRP:       str.MSRP,
 	}
 
 	JsonResponse(w, http.StatusOK, c)
-	return str
+	return nil
+}
+
+func (a *App) DeleteProduct(w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		HttpErrorResponse(w, http.StatusBadRequest, "Invalid Car ID")
+		return err
+	}
+
+	c := Car{ID: id}
+
+	car, err := c.deleteCar(a.DB)
+	if err != nil {
+		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return err
+	}
+	c = Car{
+		ID:         car.ID,
+		Make:       car.Make,
+		Model:      car.Model,
+		Horsepower: car.Horsepower,
+		MSRP:       car.MSRP,
+	}
+
+	JsonResponse(w, http.StatusOK, c)
+	return nil
 }

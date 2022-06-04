@@ -40,26 +40,26 @@ func (c *Car) updateCar(db *sql.DB) (Car, error) {
 	row := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars WHERE id=$1", idconv)
 
 	if err := row.Scan(&car.Make, &car.Model, &car.Horsepower, &car.MSRP); err != nil {
-		return "", err
+		return Car{}, err
 	}
 
-	return "Changed " + strconv.Itoa(c.ID) + " to " + car.Make + " " + car.Model + " " + car.Horsepower + " " + car.MSRP, nil
+	return car, nil
 }
 
-func (c *Car) deleteCar(db *sql.DB) (string, error) {
+func (c *Car) deleteCar(db *sql.DB) (Car, error) {
 
 	car := Car{}
-	res := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars WHERE id=$1", c.ID)
-	if err := res.Scan(&car.Make, &car.Model, &car.Horsepower, &car.MSRP); err != nil {
-		return "", nil
+	resp := db.QueryRow("SELECT Make, Model, Horsepower, MSRP FROM cars WHERE id=$1", c.ID)
+	if err := resp.Scan(&car.Make, &car.Model, &car.Horsepower, &car.MSRP); err != nil {
+		return Car{}, nil
 	}
 
 	_, err := db.Exec("DELETE from cars WHERE id=$1", c.ID)
 	if err != nil {
-		return "", err
+		return Car{}, err
 	}
 
-	return fmt.Sprintf("Deleted %s %s, %s, %s", car.Make, car.Model, car.Horsepower, car.MSRP), nil
+	return car, nil
 }
 
 func (c *Car) createCar(db *sql.DB) error {
