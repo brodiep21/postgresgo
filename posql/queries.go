@@ -2,7 +2,6 @@ package posql
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 
 	_ "github.com/lib/pq"

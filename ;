@@ -1,0 +1,11 @@
+                                     Table "public.cars"
+   Column   |         Type          | Collation | Nullable |             Default              
+------------+-----------------------+-----------+----------+----------------------------------
+ id         | integer               |           | not null | nextval('cars_id_seq'::regclass)
+ make       | character varying(50) |           | not null | 
+ model      | character varying(50) |           | not null | 
+ horsepower | character varying(50) |           | not null | 
+ msrp       | character varying(50) |           | not null | 
+Indexes:
+    "cars_pkey" PRIMARY KEY, btree (id)
+

@@ -89,59 +89,51 @@ func (a *App) GetCar(w http.ResponseWriter, r *http.Request) {
 	JsonResponse(w, http.StatusOK, c)
 }
 
-func (a *App) GetCars(w http.ResponseWriter, r *http.Request) error {
-	count, err := strconv.Atoi(r.FormValue("count"))
-	if err != nil {
-		return err
-	}
-	start, err := strconv.Atoi(r.FormValue("start"))
-	if err != nil {
-		return err
-	}
+func (a *App) GetCars(w http.ResponseWriter, r *http.Request) {
+	count, _ := strconv.Atoi(r.FormValue("count"))
+	start, _ := strconv.Atoi(r.FormValue("start"))
 
 	c := Car{}
 	cars, err := c.getCars(a.DB, start, count)
 	if err != nil {
 		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return err
+		return
 	}
 
 	JsonResponse(w, http.StatusOK, cars)
-	return nil
 }
 
-func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) error {
+func (a *App) CreateCar(w http.ResponseWriter, r *http.Request) {
 
 	var c Car
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
-		return err
+		return
 	}
 	defer r.Body.Close()
 
 	if err := c.createCar(a.DB); err != nil {
 		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return err
+		return
 	}
 
 	JsonResponse(w, http.StatusCreated, c)
-	return nil
 }
 
-func (a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
+func (a *App) UpdateCar(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid Car ID")
-		return err
+		return
 	}
 
 	var c Car
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid request information")
-		return err
+		return
 	}
 
 	defer r.Body.Close()
@@ -149,7 +141,7 @@ func (a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
 	str, err := c.updateCar(a.DB)
 	if err != nil {
 		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return err
+		return
 	}
 	c = Car{
 		ID:         id,
@@ -160,15 +152,14 @@ func (a *App) UpdateCar(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	JsonResponse(w, http.StatusOK, c)
-	return nil
 }
 
-func (a *App) DeleteProduct(w http.ResponseWriter, r *http.Request) error {
+func (a *App) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		HttpErrorResponse(w, http.StatusBadRequest, "Invalid Car ID")
-		return err
+		return
 	}
 
 	c := Car{ID: id}
@@ -176,7 +167,7 @@ func (a *App) DeleteProduct(w http.ResponseWriter, r *http.Request) error {
 	car, err := c.deleteCar(a.DB)
 	if err != nil {
 		HttpErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return err
+		return
 	}
 	c = Car{
 		ID:         car.ID,
@@ -187,5 +178,12 @@ func (a *App) DeleteProduct(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	JsonResponse(w, http.StatusOK, c)
-	return nil
+}
+
+func (a *App) InitializeRoutes() {
+	a.Router.HandleFunc("/cars", a.GetCars).Methods("GET")
+	a.Router.HandleFunc("/car", a.CreateCar).Methods("POST")
+	a.Router.HandleFunc("/car/{id:[0-9]+}", a.GetCar).Methods("GET")
+	a.Router.HandleFunc("/car/{id:[0-9]+}", a.UpdateCar).Methods("PUT")
+	a.Router.HandleFunc("/car/{id:[0-9]+}", a.DeleteProduct).Methods("DELETE")
 }

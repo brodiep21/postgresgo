@@ -24,23 +24,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	vehicle, err = MMquestions()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// vehicle, err = MMquestions()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	fmt.Printf("here is your data. \n" + vehicle)
-	fmt.Println("Would you like to add this data into the table? Yes or No?")
+	// fmt.Printf("here is your data. \n" + vehicle)
+	// fmt.Println("Would you like to add this data into the table? Yes or No?")
 
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	response := scanner.Text()
-	response = strings.ToLower(response)
-	switch response {
-	case "y", "yes":
-		posql.TableInsert(make, model, hp, msrp)
-	case "n", "no":
-		break
-	}
+	// scanner := bufio.NewScanner(os.Stdin)
+	// scanner.Scan()
+	// response := scanner.Text()
+	// response = strings.ToLower(response)
+	// switch response {
+	// case "y", "yes":
+	// 	posql.TableInsert(make, model, hp, msrp)
+	// case "n", "no":
+	// 	break
+	// }
 
 }
