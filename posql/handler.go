@@ -46,6 +46,7 @@ func (a *App) Initialize(password string) error {
 	fmt.Println("Reached DB")
 
 	a.Router = mux.NewRouter()
+	a.InitializeRoutes()
 	return nil
 }
 

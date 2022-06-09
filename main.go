@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/brodiep21/postgresgo/posql"
 	_ "github.com/lib/pq"
