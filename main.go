@@ -21,6 +21,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+
+}
+
+
+
+//for outside google queries
+
+
 	// vehicle, err = MMquestions()
 	// if err != nil {
 	// 	log.Fatal(err)
@@ -40,4 +48,3 @@ func main() {
 	// 	break
 	// }
 
-}
